@@ -1,19 +1,10 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
-import type { AuthMode } from "../types/blog";
 
-type AuthPanelProps = {
-  onSubmit: (
-    mode: AuthMode,
-    input: { name: string; email: string; password: string },
-  ) => Promise<void>;
-};
-
-export function AuthPanel({ onSubmit }: AuthPanelProps) {
-  const [authMode, setAuthMode] = useState<AuthMode>("login");
+export function AuthPanel({ onSubmit }) {
+  const [authMode, setAuthMode] = useState("login");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     await onSubmit(authMode, form);
   };

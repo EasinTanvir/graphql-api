@@ -1,14 +1,6 @@
 import { PostCard } from "./PostCard";
-import type { Post } from "../types/blog";
 
-type PostFeedProps = {
-  canComment: boolean;
-  isLoading: boolean;
-  onCreateComment: (input: { postId: string; content: string }) => Promise<void>;
-  posts: Post[];
-};
-
-export function PostFeed({ canComment, isLoading, onCreateComment, posts }: PostFeedProps) {
+export function PostFeed({ canComment, isLoading, onCreateComment, posts }) {
   if (isLoading) {
     return <section className="feed-state">Loading posts...</section>;
   }

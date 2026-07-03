@@ -1,11 +1,6 @@
 import { useState } from "react";
 
-type CommentFormProps = {
-  postId: string;
-  onSubmit: (input: { postId: string; content: string }) => Promise<void>;
-};
-
-export function CommentForm({ postId, onSubmit }: CommentFormProps) {
+export function CommentForm({ postId, onSubmit }) {
   const [content, setContent] = useState("");
 
   const handleSubmit = async () => {

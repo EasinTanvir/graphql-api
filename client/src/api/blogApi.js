@@ -1,7 +1,6 @@
 import { graphqlRequest } from "./graphqlClient";
-import type { AuthPayload, Post, User } from "../types/blog";
 
-const AUTH_FIELDS = `
+export const AUTH_FIELDS = `
   token
   user {
     id
@@ -10,7 +9,7 @@ const AUTH_FIELDS = `
   }
 `;
 
-const POST_FIELDS = `
+export const POST_FIELDS = `
   id
   title
   content
@@ -32,30 +31,9 @@ const POST_FIELDS = `
   }
 `;
 
-export type RegisterInput = {
-  name: string;
-  email: string;
-  password: string;
-};
-
-export type LoginInput = {
-  email: string;
-  password: string;
-};
-
-export type CreatePostInput = {
-  title: string;
-  content: string;
-};
-
-export type CreateCommentInput = {
-  postId: string;
-  content: string;
-};
-
 export const blogApi = {
-  getMe: (token: string) =>
-    graphqlRequest<{ me: User | null }>(
+  getMe: (token) =>
+    graphqlRequest(
       `query Me {
         me {
           id
@@ -68,7 +46,7 @@ export const blogApi = {
     ),
 
   getPosts: () =>
-    graphqlRequest<{ posts: Post[] }>(
+    graphqlRequest(
       `query Posts {
         posts {
           ${POST_FIELDS}
@@ -76,8 +54,8 @@ export const blogApi = {
       }`,
     ),
 
-  register: (input: RegisterInput) =>
-    graphqlRequest<{ register: AuthPayload }>(
+  register: (input) =>
+    graphqlRequest(
       `mutation Register($input: RegisterInput!) {
         register(input: $input) {
           ${AUTH_FIELDS}
@@ -86,8 +64,8 @@ export const blogApi = {
       { input },
     ),
 
-  login: (input: LoginInput) =>
-    graphqlRequest<{ login: AuthPayload }>(
+  login: (input) =>
+    graphqlRequest(
       `mutation Login($input: LoginInput!) {
         login(input: $input) {
           ${AUTH_FIELDS}
@@ -96,8 +74,8 @@ export const blogApi = {
       { input },
     ),
 
-  createPost: (input: CreatePostInput, token: string) =>
-    graphqlRequest<{ createPost: Post }>(
+  createPost: (input, token) =>
+    graphqlRequest(
       `mutation CreatePost($input: CreatePostInput!) {
         createPost(input: $input) {
           ${POST_FIELDS}
@@ -107,8 +85,8 @@ export const blogApi = {
       token,
     ),
 
-  createComment: (input: CreateCommentInput, token: string) =>
-    graphqlRequest<{ createComment: { id: string } }>(
+  createComment: (input, token) =>
+    graphqlRequest(
       `mutation CreateComment($input: CreateCommentInput!) {
         createComment(input: $input) {
           id

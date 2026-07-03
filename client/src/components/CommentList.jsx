@@ -1,10 +1,4 @@
-import type { Comment } from "../types/blog";
-
-type CommentListProps = {
-  comments: Comment[];
-};
-
-export function CommentList({ comments }: CommentListProps) {
+export function CommentList({ comments }) {
   return (
     <div className="comments">
       <h3>Comments</h3>

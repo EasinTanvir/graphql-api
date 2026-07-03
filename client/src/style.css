@@ -37,6 +37,10 @@ button:hover {
   background: #1d4ed8;
 }
 
+a {
+  color: inherit;
+}
+
 button.active {
   background: #111827;
 }
@@ -80,6 +84,7 @@ form {
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .eyebrow {
@@ -100,7 +105,7 @@ p {
 
 h1 {
   color: #0f172a;
-  font-size: clamp(2rem, 5vw, 3.6rem);
+  font-size: clamp(2rem, 3.4rem, 3.6rem);
   line-height: 1;
   margin-bottom: 0;
 }
@@ -133,6 +138,32 @@ h3 {
   color: #1e293b;
 }
 
+.nav-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nav-links a,
+.button-link {
+  border-radius: 6px;
+  color: #1e293b;
+  font-weight: 800;
+  padding: 0.7rem 0.9rem;
+  text-decoration: none;
+}
+
+.nav-links a {
+  background: #e2e8f0;
+}
+
+.nav-links a.active,
+.button-link {
+  background: #111827;
+  color: #ffffff;
+}
+
 .notice {
   border-left: 4px solid #2563eb;
   background: #ffffff;
@@ -141,7 +172,11 @@ h3 {
   padding: 0.85rem 1rem;
 }
 
-.layout {
+.inline-notice {
+  margin: 1rem 0 0;
+}
+
+.page-grid {
   align-items: start;
   display: grid;
   gap: 24px;
@@ -161,6 +196,45 @@ h3 {
   padding: 20px;
   position: sticky;
   top: 24px;
+}
+
+.page-panel {
+  max-width: 780px;
+  position: static;
+}
+
+.guide {
+  display: grid;
+  gap: 18px;
+}
+
+.guide .page-panel {
+  max-width: 960px;
+}
+
+.action-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.button-link {
+  display: inline-flex;
+  justify-content: center;
+}
+
+pre {
+  background: #0f172a;
+  border-radius: 8px;
+  color: #e5edf7;
+  overflow-x: auto;
+  padding: 1rem;
+  white-space: pre;
+}
+
+code {
+  font-family: "Cascadia Code", Consolas, "Liberation Mono", monospace;
+  font-size: 0.9rem;
 }
 
 .tabs {
@@ -242,7 +316,7 @@ h3 {
     flex-direction: column;
   }
 
-  .layout {
+  .page-grid {
     grid-template-columns: 1fr;
   }
 
