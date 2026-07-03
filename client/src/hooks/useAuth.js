@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { blogApi } from "../api/blogApi";
+import { useApolloClient, useMutation } from "@apollo/client/react";
+import { LOGIN, REGISTER } from "../api/graphqlOperations";
 
 const TOKEN_KEY = "token";
 const USER_KEY = "user";
@@ -10,8 +11,11 @@ const getStoredUser = () => {
 };
 
 export function useAuth() {
+  const client = useApolloClient();
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || "");
   const [user, setUser] = useState(() => getStoredUser());
+  const [loginMutation] = useMutation(LOGIN);
+  const [registerMutation] = useMutation(REGISTER);
 
   const isLoggedIn = useMemo(() => Boolean(token && user), [token, user]);
 
@@ -23,10 +27,19 @@ export function useAuth() {
   };
 
   const submitAuth = async (mode, input) => {
-    const payload =
+    const result =
       mode === "register"
-        ? (await blogApi.register(input)).register
-        : (await blogApi.login({ email: input.email, password: input.password })).login;
+        ? await registerMutation({ variables: { input } })
+        : await loginMutation({
+            variables: {
+              input: {
+                email: input.email,
+                password: input.password,
+              },
+            },
+          });
+
+    const payload = mode === "register" ? result.data.register : result.data.login;
 
     saveAuth(payload);
   };
@@ -36,6 +49,7 @@ export function useAuth() {
     localStorage.removeItem(USER_KEY);
     setToken("");
     setUser(null);
+    client.clearStore().catch(() => {});
   };
 
   return {

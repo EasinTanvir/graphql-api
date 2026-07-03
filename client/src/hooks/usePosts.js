@@ -1,36 +1,31 @@
-import { useCallback, useEffect, useState } from "react";
-import { blogApi } from "../api/blogApi";
+import { useMutation, useQuery } from "@apollo/client/react";
+import { CREATE_COMMENT, CREATE_POST, GET_POSTS } from "../api/graphqlOperations";
 
-export function usePosts(token) {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+export function usePosts() {
+  const { data, error, loading, refetch } = useQuery(GET_POSTS);
+  const [createPostMutation] = useMutation(CREATE_POST);
+  const [createCommentMutation] = useMutation(CREATE_COMMENT);
 
-  const loadPosts = useCallback(async () => {
-    setIsLoading(true);
-    const data = await blogApi.getPosts();
-    setPosts(data.posts);
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    loadPosts().catch(() => setIsLoading(false));
-  }, [loadPosts]);
+  const loadPosts = async () => {
+    await refetch();
+  };
 
   const createPost = async (input) => {
-    await blogApi.createPost(input, token);
-    await loadPosts();
+    await createPostMutation({ variables: { input } });
+    await refetch();
   };
 
   const createComment = async (input) => {
-    await blogApi.createComment(input, token);
-    await loadPosts();
+    await createCommentMutation({ variables: { input } });
+    await refetch();
   };
 
   return {
     createComment,
     createPost,
-    isLoading,
+    error,
+    isLoading: loading,
     loadPosts,
-    posts,
+    posts: data?.posts || [],
   };
 }

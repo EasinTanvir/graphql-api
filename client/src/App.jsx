@@ -12,7 +12,7 @@ import "./style.css";
 function App() {
   const [message, setMessage] = useState("");
   const auth = useAuth();
-  const posts = usePosts(auth.token);
+  const posts = usePosts();
   const navigate = useNavigate();
 
   const runAction = async (action, successMessage) => {

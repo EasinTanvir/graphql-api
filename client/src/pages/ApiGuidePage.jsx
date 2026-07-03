@@ -1,4 +1,4 @@
-import { API_URL } from "../api/graphqlClient";
+import { API_URL } from "../api/apolloClient";
 
 const postsQuery = `query Posts {
   posts {
@@ -46,21 +46,39 @@ function CodeBlock({ children }) {
 }
 
 export function ApiGuidePage({ token }) {
-  const fetchExample = `await fetch("${API_URL}", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: "Bearer YOUR_JWT_TOKEN"
-  },
-  body: JSON.stringify({
-    query: CREATE_POST_MUTATION,
-    variables: {
-      input: {
-        title: "Hello GraphQL",
-        content: "This came from the React client."
-      }
+  const apolloSetup = `import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from "@apollo/client";
+
+const httpLink = new HttpLink({
+  uri: "${API_URL}",
+});
+
+const authLink = new ApolloLink((operation, forward) => {
+  const token = localStorage.getItem("token");
+
+  operation.setContext(({ headers = {} }) => ({
+    headers: {
+      ...headers,
+      ...(token ? { Authorization: \`Bearer \${token}\` } : {}),
     }
-  })
+  }));
+
+  return forward(operation);
+});
+
+export const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: authLink.concat(httpLink),
+});`;
+
+  const mutationHookExample = `const [createPost] = useMutation(CREATE_POST);
+
+await createPost({
+  variables: {
+    input: {
+      title: "Hello GraphQL",
+      content: "This came from Apollo Client."
+    }
+  }
 });`;
 
   return (
@@ -68,9 +86,9 @@ export function ApiGuidePage({ token }) {
       <div className="panel page-panel">
         <h2>How requests go to the backend</h2>
         <p className="muted">
-          The React app sends every operation as a POST request to <strong>{API_URL}</strong>.
-          Public queries do not need a token. Create post and comment mutations need
-          `Authorization: Bearer token`.
+          The React app uses Apollo Client to send operations to <strong>{API_URL}</strong>.
+          Apollo sends the HTTP request, caches query results, and attaches the saved
+          JWT token for protected mutations.
         </p>
         {token && (
           <p className="notice inline-notice">
@@ -80,12 +98,17 @@ export function ApiGuidePage({ token }) {
       </div>
 
       <article className="panel page-panel">
-        <h2>1. Fetch all posts</h2>
+        <h2>1. Apollo client setup</h2>
+        <CodeBlock>{apolloSetup}</CodeBlock>
+      </article>
+
+      <article className="panel page-panel">
+        <h2>2. Fetch all posts</h2>
         <CodeBlock>{postsQuery}</CodeBlock>
       </article>
 
       <article className="panel page-panel">
-        <h2>2. Login</h2>
+        <h2>3. Login</h2>
         <CodeBlock>{loginMutation}</CodeBlock>
         <CodeBlock>{`variables: {
   input: {
@@ -96,9 +119,9 @@ export function ApiGuidePage({ token }) {
       </article>
 
       <article className="panel page-panel">
-        <h2>3. Create post with token</h2>
+        <h2>4. Create post with Apollo mutation</h2>
         <CodeBlock>{createPostMutation}</CodeBlock>
-        <CodeBlock>{fetchExample}</CodeBlock>
+        <CodeBlock>{mutationHookExample}</CodeBlock>
       </article>
     </section>
   );

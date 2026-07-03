@@ -27,6 +27,11 @@ export function PostsPage({ auth, posts, runAction }) {
         }
         posts={posts.posts}
       />
+      {posts.error && (
+        <section className="feed-state error-state">
+          {posts.error.message}
+        </section>
+      )}
     </section>
   );
 }
