@@ -2,6 +2,7 @@ import "dotenv/config";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@as-integrations/express5";
 import cors from "cors";
+import morgan from "morgan";
 import express from "express";
 import { getUserFromRequest } from "./middlewares/auth.js";
 import { resolvers } from "./graphql/resolvers.js";
@@ -24,6 +25,7 @@ app.use(
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
   }),
+  morgan("dev"),
   express.json(),
   expressMiddleware(apolloServer, {
     context: async ({ req }) => ({
